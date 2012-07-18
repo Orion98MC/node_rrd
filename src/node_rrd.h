@@ -1,5 +1,5 @@
 /*
-    RRD (http://oss.oetiker.ch/rrdtool/) bindings module for node (http://nodejs.org)
+    RRDtool (http://oss.oetiker.ch/rrdtool/) bindings module for node (http://nodejs.org)
     
     Copyright (c), 2012 Thierry Passeron
 

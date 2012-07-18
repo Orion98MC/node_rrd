@@ -1,13 +1,13 @@
 # Description
 
-rrd is a node.js (http://nodejs.org) native binding for RRD (http://oss.oetiker.ch/rrdtool/).
+rrd is a node.js (http://nodejs.org) native binding for RRDtool (http://oss.oetiker.ch/rrdtool/).
 
 # Dependencies
 
 In order to compile the c++ sources, you need to have: 
   * node-gyp (npm install -g node-gyp)
   * a compiler toolchain (gcc etc...)
-  * the RRD library (http://oss.oetiker.ch/rrdtool/).
+  * the RRDtool library (http://oss.oetiker.ch/rrdtool/).
 
 For tests:
   * mocha (http://visionmedia.github.com/mocha/).
@@ -118,7 +118,7 @@ rrd.create(filename, 60, now(), ['DS:loadavg1:GAUGE:120:0:U', 'RRA:LAST:0.5:1:60
 # Alpha
 
 This module is in alpha development stage. 
-At this point not all rrd commands are binded. I did the ones that where the most important to me.
+At this point not all rrdtool commands are binded. I did the ones that where the most important to me.
 If you really need xport or an other command feel free to contact me (thierry.passeron@gmail.com).
 
 # Tests
