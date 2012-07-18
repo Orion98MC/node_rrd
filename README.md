@@ -119,7 +119,7 @@ rrd.create(filename, 60, now(), ['DS:loadavg1:GAUGE:120:0:U', 'RRA:LAST:0.5:1:60
 
 This module is in alpha development stage. 
 At this point not all rrdtool commands are binded. I did the ones that where the most important to me.
-If you really need xport or an other command feel free to contact me (thierry.passeron@gmail.com).
+If you really need xport or an other command feel free to contact me (thierry dot passeron at gmail dot com).
 
 # Tests
 
