@@ -46,10 +46,10 @@ public:
 };
 
 Infos::~Infos() {
-	free(cf);
-	for (unsigned long i = 0; i < ds_cnt; i++) free(ds_namv[i]);
-	free(ds_namv);
-	free(data);
+    free(cf);
+    for (unsigned long i = 0; i < ds_cnt; i++) free(ds_namv[i]);
+    free(ds_namv);
+    free(data);
 }
 
 }
@@ -106,44 +106,44 @@ static void async_after(uv_work_t *req) {
     Infos * info = static_cast<Infos*>(req->data);
     
     if (info->status == 0) {
-    	rrd_value_t *datai;
-    	long ti;
+        rrd_value_t *datai;
+        long ti;
 
-    	datai = info->data;
-    	for (ti = info->start + info->step; ti <= info->end; ti += info->step) {
-    		Handle<Value> argv[] = { Number::New(ti), current_data_to_object(info->ds_cnt, info->ds_namv, datai++) };
-    		info->callback->Call(Context::GetCurrent()->Global(), 2, argv);
-    	}
-    	
+        datai = info->data;
+        for (ti = info->start + info->step; ti <= info->end; ti += info->step) {
+            Handle<Value> argv[] = { Number::New(ti), current_data_to_object(info->ds_cnt, info->ds_namv, datai++) };
+            info->callback->Call(Context::GetCurrent()->Global(), 2, argv);
+        }
+        
     } else {
-    	info->callback->Call(Context::GetCurrent()->Global(), 1, (Handle<Value> []){ Number::New(info->status) });
+        info->callback->Call(Context::GetCurrent()->Global(), 1, (Handle<Value> []){ Number::New(info->status) });
     }
 
-	delete(info);
+    delete(info);
 }
 
 /* @return
-	{
-		<ds_name1>: <value1>,
-		<ds_name2>: <value2>,
-		...
-	}
+    {
+        <ds_name1>: <value1>,
+        <ds_name2>: <value2>,
+        ...
+    }
 */
 Handle<Object> current_data_to_object(unsigned long ds_cnt, char ** ds_namv, rrd_value_t *data) { 
-	HandleScope scope;
+    HandleScope scope;
 
-	Handle<ObjectTemplate> obj = ObjectTemplate::New();
+    Handle<ObjectTemplate> obj = ObjectTemplate::New();
     Handle<Object> result = obj->NewInstance();
 
-	unsigned long ii;
-	rrd_value_t *datai;
+    unsigned long ii;
+    rrd_value_t *datai;
 
-	datai = data;
-	for (ii = 0; ii < ds_cnt; ii++) {
-		result->Set(String::New(ds_namv[ii]), Number::New(*(datai++)));
-	}
+    datai = data;
+    for (ii = 0; ii < ds_cnt; ii++) {
+        result->Set(String::New(ds_namv[ii]), Number::New(*(datai++)));
+    }
 
-	return scope.Close(result);
+    return scope.Close(result);
 }
 
 }

@@ -27,14 +27,14 @@
 #include "node_rrd.h"
 
 extern "C" {
-	static void init(Handle<Object> target) {
-		HandleScope scope;
-		NODE_SET_METHOD(target, "create", node_rrd::create);
-		NODE_SET_METHOD(target, "update", node_rrd::update);
-		NODE_SET_METHOD(target, "fetch", node_rrd::fetch);
-		NODE_SET_METHOD(target, "last", node_rrd::last);
-		NODE_SET_METHOD(target, "info", node_rrd::info);
-	}
+    static void init(Handle<Object> target) {
+        HandleScope scope;
+        NODE_SET_METHOD(target, "create", node_rrd::create);
+        NODE_SET_METHOD(target, "update", node_rrd::update);
+        NODE_SET_METHOD(target, "fetch", node_rrd::fetch);
+        NODE_SET_METHOD(target, "last", node_rrd::last);
+        NODE_SET_METHOD(target, "info", node_rrd::info);
+    }
 
-	NODE_MODULE(rrd_bindings, init)
+    NODE_MODULE(rrd_bindings, init)
 }

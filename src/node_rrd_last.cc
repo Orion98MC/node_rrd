@@ -43,9 +43,9 @@ static void async_after(uv_work_t *req);
 Handle<Value> last(const Arguments &args) { // rrd.last(String filename, Function callback);
     HandleScope scope;
 
-	CHECK_FUN_ARG(1)
+    CHECK_FUN_ARG(1)
 
-	// Create info baton
+    // Create info baton
     CREATE_ASYNC_BATON(Infos, info)
 
     // Get filename
@@ -62,7 +62,7 @@ Handle<Value> last(const Arguments &args) { // rrd.last(String filename, Functio
 static void async_worker(uv_work_t *req) {
     Infos * info = static_cast<Infos*>(req->data);
 
-	info->last = rrd_last_r(info->filename);
+    info->last = rrd_last_r(info->filename);
 }
 
 static void async_after(uv_work_t *req) {

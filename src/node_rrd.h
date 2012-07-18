@@ -33,7 +33,7 @@
 #include <math.h> // isnan ...
 
 #ifdef DEBUG
-#	include <iostream> 
+#   include <iostream> 
 #endif
 
 using namespace v8;
@@ -44,7 +44,7 @@ namespace node_rrd {
 /* The async baton used by libuv */
 class AsyncInfos {
 public:
-	uv_work_t request; 
+    uv_work_t request; 
 
     /* Used in the uv work callback */
     char *filename;
@@ -58,16 +58,16 @@ public:
 
 /* Some useful macros to extract arguments */
 #define SET_CHARS_ARG(I, VAR)                                           \
-	String::Utf8Value _chars ## I(args[I]->ToString());                 \
-	VAR = strndup(*_chars ## I, _chars ## I.length());
+    String::Utf8Value _chars ## I(args[I]->ToString());                 \
+    VAR = strndup(*_chars ## I, _chars ## I.length());
 
 #define SET_ARGC_ARGV_ARG(I, VAR_ARGC, VAR_ARGV)                        \
     Local<Array> argv ## I = Local<Array>::Cast(args[I]);               \
     VAR_ARGC = argv ## I->Length();                                     \
     VAR_ARGV = (char**)malloc(sizeof(char*) * VAR_ARGC);                \
     for (int i = 0; i < VAR_ARGC; i++) {                                \
-    	String::Utf8Value arg(argv ## I->Get(i));                       \
-    	VAR_ARGV[i] = strndup(*arg, arg.length());                      \
+        String::Utf8Value arg(argv ## I->Get(i));                       \
+        VAR_ARGV[i] = strndup(*arg, arg.length());                      \
     }
 
 #define CHECK_FUN_ARG(I)                                                \
@@ -84,97 +84,97 @@ public:
 
 
 /*
-	create
-	Create an empty RRD
+    create
+    Create an empty RRD
 
-	Usage: 
-		rrd.create(String filename, Number step, Number start, Array spec, Function callback);
+    Usage: 
+        rrd.create(String filename, Number step, Number start, Array spec, Function callback);
 
-	Example:
-		var rrd = require('rrd');
+    Example:
+        var rrd = require('rrd');
 
-		var now = Math.ceil((new Date).getTime() / 1000);
-		rrd.create('/tmp/test.rrd', 60, now, ["DS:busy:GAUGE:120:0:U", "RRA:LAST:0.5:1:60"], function (status){ 
-			if (status === 0) console.log("Created!");
-			else console.log("Error!");
-		});
+        var now = Math.ceil((new Date).getTime() / 1000);
+        rrd.create('/tmp/test.rrd', 60, now, ["DS:busy:GAUGE:120:0:U", "RRA:LAST:0.5:1:60"], function (status){ 
+            if (status === 0) console.log("Created!");
+            else console.log("Error!");
+        });
 */
 Handle<Value> create(const Arguments &args);
 
 
 
 /*
-	update
-	Update an RRD
+    update
+    Update an RRD
 
-	Usage: 
-		rrd.update(String filename, String tmplt, Array updates, Function callback);
+    Usage: 
+        rrd.update(String filename, String tmplt, Array updates, Function callback);
 
-	Example:
-		var rrd = require('rrd');
+    Example:
+        var rrd = require('rrd');
 
-		var value = 80.0;
-		var now = Math.ceil((new Date).getTime() / 1000);
+        var value = 80.0;
+        var now = Math.ceil((new Date).getTime() / 1000);
 
-		rrd.update('/tmp/test.rrd', 'busy', [[now, value].join(':')], function (status){ 
-			if (status === 0) console.log("Updated!");
-			else console.log("Error!");
-		});
+        rrd.update('/tmp/test.rrd', 'busy', [[now, value].join(':')], function (status){ 
+            if (status === 0) console.log("Updated!");
+            else console.log("Error!");
+        });
 */
 Handle<Value> update(const Arguments &args);
 
 
 
 /*
-	fetch
-	Fetch data in an RRD
+    fetch
+    Fetch data in an RRD
 
-	Usage: 
-		rrd.fetch(String filename, String cf, Number start, Number end, Number step, Function callback);
+    Usage: 
+        rrd.fetch(String filename, String cf, Number start, Number end, Number step, Function callback);
 
-	Example:
-		var rrd = require('rrd');
+    Example:
+        var rrd = require('rrd');
 
-		var now = Math.ceil((new Date).getTime() / 1000); 
-		rrd.fetch("/tmp/test.rrd", "LAST", now - 1000, now, null, function (time, data) {
-			console.log(time, data);
-		});
+        var now = Math.ceil((new Date).getTime() / 1000); 
+        rrd.fetch("/tmp/test.rrd", "LAST", now - 1000, now, null, function (time, data) {
+            console.log(time, data);
+        });
 */
 Handle<Value> fetch(const Arguments &args);
 
 
 
 /*
-	last
-	Get database last update time
+    last
+    Get database last update time
 
-	Usage: 
-		rrd.last(String filename, Function callback);
+    Usage: 
+        rrd.last(String filename, Function callback);
 
-	Example:
-		var rrd = require('rrd');
+    Example:
+        var rrd = require('rrd');
 
-		rrd.last('/tmp/test.rrd', function (time) { 
-			console.log('Last updated on', new Date(time * 1000));
-		});
+        rrd.last('/tmp/test.rrd', function (time) { 
+            console.log('Last updated on', new Date(time * 1000));
+        });
 */
 Handle<Value> last(const Arguments &args);
 
 
 
 /*
-	info
-	Get database info
+    info
+    Get database info
 
-	Usage: 
-		rrd.info(String filename, Function callback);
+    Usage: 
+        rrd.info(String filename, Function callback);
 
-	Example:
-		var rrd = require('rrd');
+    Example:
+        var rrd = require('rrd');
 
-		rrd.info('/tmp/test.rrd', function (info) { 
-			console.log(info);
-		});
+        rrd.info('/tmp/test.rrd', function (info) { 
+            console.log(info);
+        });
 */
 Handle<Value> info(const Arguments &args); 
 

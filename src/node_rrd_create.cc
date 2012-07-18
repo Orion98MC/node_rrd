@@ -32,8 +32,8 @@ namespace {
 
 class Infos: public AsyncInfos {
 public:
-	unsigned long step;
-	time_t time;
+    unsigned long step;
+    time_t time;
     int argc;
     char **argv;
 
@@ -41,8 +41,8 @@ public:
 };
 
 Infos::~Infos() {
-	for (int i = 0; i < argc; i++) free(argv[i]);
-	free(argv);
+    for (int i = 0; i < argc; i++) free(argv[i]);
+    free(argv);
 }
 
 }
@@ -51,14 +51,14 @@ static void async_worker(uv_work_t *req);
 static void async_after(uv_work_t *req);
 
 Handle<Value> create(const Arguments &args) { /* rrd.create(String filename, Number step, Number start, Array spec, Function callback); */
-	HandleScope scope;
+    HandleScope scope;
 
-	CHECK_FUN_ARG(4)
+    CHECK_FUN_ARG(4)
 
-	// Create info baton
-	CREATE_ASYNC_BATON(Infos, info)
+    // Create info baton
+    CREATE_ASYNC_BATON(Infos, info)
 
-	// Get filename
+    // Get filename
     SET_CHARS_ARG(0, info->filename)
 
     // Get step
@@ -70,8 +70,8 @@ Handle<Value> create(const Arguments &args) { /* rrd.create(String filename, Num
     // Get spec array
     SET_ARGC_ARGV_ARG(3, info->argc, info->argv)
 
-	// Get callback
-	SET_PERSFUN_ARG(4, info->callback)
+    // Get callback
+    SET_PERSFUN_ARG(4, info->callback)
 
     uv_queue_work(uv_default_loop(), &info->request, async_worker, async_after);
 
@@ -80,13 +80,13 @@ Handle<Value> create(const Arguments &args) { /* rrd.create(String filename, Num
 
 static void async_worker(uv_work_t *req) {
     Infos * info = static_cast<Infos*>(req->data);
-	
-	info->status = rrd_create_r(
-    	(const char*)info->filename,
-    	info->step,
-    	info->time,
-    	info->argc,
-    	(const char**)info->argv
+    
+    info->status = rrd_create_r(
+        (const char*)info->filename,
+        info->step,
+        info->time,
+        info->argc,
+        (const char**)info->argv
     );
 }
 
