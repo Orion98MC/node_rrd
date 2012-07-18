@@ -1,0 +1,16 @@
+{ "name": "rrd"
+, "version": "1.0.4"
+, "authors": [
+    "Thierry Passeron (thierry.passeron@gmail.com)"
+  ]
+, "description": "RRD for Node.js"
+, "engines": { "node": ">=0.6.0" }
+, "main": "./lib/rrd"
+, "dependencies": {
+    "bindings": "*"
+  }
+, "repository": {
+    "type": "git"
+  , "url": "http://github.com/Orion98MC/node_rrd.git"
+  }
+}

@@ -1,0 +1,26 @@
+#!/usr/bin/env node
+
+var rrd = require('../build/Release/rrd_bindings')
+,	os = require('os')
+,	filename = '/tmp/test3.rrd'
+;
+
+function now() { return Math.ceil((new Date).getTime() / 1000); }
+
+function startUpdating() {
+	function updateNow() {
+		rrd.update(filename, "loadavg1:loadavg5:loadavg15", [[now()].concat(os.loadavg()).join(':')], function (status) {
+			console.log(status == 0 ? '.' : '*');
+		});
+	}
+
+	setInterval(updateNow, 60 * 1000);
+}
+
+rrd.create(filename, 60, now() - 60, ['DS:loadavg1:GAUGE:120:0:U', 'DS:loadavg5:GAUGE:120:0:U', 'DS:loadavg15:GAUGE:120:0:U', 'RRA:LAST:0.5:1:60'], function (status) {
+	if (status !== 0) throw 'Error creating RRD';
+
+	console.log("RRD created!", status);
+	startUpdating();
+});
+
