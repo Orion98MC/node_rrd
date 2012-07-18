@@ -3,7 +3,7 @@
 , "authors": [
     "Thierry Passeron (thierry.passeron@gmail.com)"
   ]
-, "description": "RRD for Node.js"
+, "description": "Node.js native binding for RRD"
 , "engines": { "node": ">=0.6.0" }
 , "main": "./lib/rrd"
 , "dependencies": {
