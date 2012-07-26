@@ -1,6 +1,6 @@
 # Description
 
-rrd is a node.js (http://nodejs.org) native binding for RRDtool (http://oss.oetiker.ch/rrdtool/).
+node_rrd is a node.js (http://nodejs.org) native binding for RRDtool (http://oss.oetiker.ch/rrdtool/).
 
 # Dependencies
 
@@ -28,24 +28,27 @@ Require the module
 var rrd = require('rrd');
 ```
 
-In the following examples, we assume:
-
+## create
 ```js
-var filename = '/tmp/test.rrd';
+rrd.create(String filename, Integer step, Integer start_time, [ String ds, ..., String rra, ... ], Function callback(error)) 
 ```
 
-## create
-
+Example:
 ```js
+var filename = '/tmp/test.rrd';
 var now = Math.ceil((new Date).getTime() / 1000);
 
-rrd.create(filename, 60, now, ["DS:busy:GAUGE:120:0:U", "RRA:LAST:0.5:1:60"], function (status){ 
-	console.log(status === 0 ? "Created!" : "Error!");
+rrd.create(filename, 60, now, ["DS:busy:GAUGE:120:0:U", "RRA:LAST:0.5:1:60"], function (error) { 
+	if (error) console.log("Error:", error);
 });
 ```
 
 ## info
+```js
+rrd.info(String filename, Function callback(Object info)) 
+```
 
+Example:
 ```js
 var filename = '/tmp/test.rrd';
 
@@ -55,27 +58,43 @@ rrd.info(filename, function (info) {
 ```
 
 ## last
-
 ```js
+rrd.last(String filename, Function callback(Integer last)) 
+```
+
+Example:
+```js
+var filename = '/tmp/test.rrd';
+
 rrd.last(filename, function (last) {
 	console.log(last);
 });
 ```
 
 ## update
-
 ```js
+rrd.update(String filename, String template, [ String updates, ... ], Function callback(error)) 
+```
+
+Example:
+```js
+var filename = '/tmp/test.rrd';
 var value = 80.0;
 var now = Math.ceil((new Date).getTime() / 1000);
 
-rrd.update('/tmp/test.rrd', 'busy', [[now, value].join(':')], function (status){ 
-	console.log(status === 0 ? "Updated!" : "Error!");
+rrd.update(filename, 'busy', [[now, value].join(':')], function (error) { 
+	if (error) console.log("Error:", error);
 });
 ```
 
 ## fetch
-
 ```js
+rrd.fetch(String filename, String cf, Integer start, Integer end, Integer steps, Function callback(Integer time, Object data)) 
+```
+
+Example:
+```js
+var filename = '/tmp/test.rrd';
 var now = Math.ceil((new Date).getTime() / 1000);
 
 rrd.fetch(filename, "LAST", now - 1000, now, null, function (time, data) { 
@@ -99,16 +118,16 @@ function now() { return Math.ceil((new Date).getTime() / 1000); }
 
 function startUpdating() {
 	function updateNow() {
-		rrd.update(filename, "loadavg1", [[now(), os.loadavg()[0]].join(':')], function (status) {
-			console.log(status === 0 ? '.' : '*');
+		rrd.update(filename, "loadavg1", [[now(), os.loadavg()[0]].join(':')], function (error) {
+			console.log(error === null ? '.' : error);
 		});
 	}
 
 	setInterval(updateNow, 60 * 1000);
 }
 
-rrd.create(filename, 60, now(), ['DS:loadavg1:GAUGE:120:0:U', 'RRA:LAST:0.5:1:60'], function (status) {
-	if (status !== 0) throw 'Error creating RRD';
+rrd.create(filename, 60, now(), ['DS:loadavg1:GAUGE:120:0:U', 'RRA:LAST:0.5:1:60'], function (error) {
+	if (error !== null) { throw 'Error creating RRD:' + error; }
 
 	console.log("RRD created!");
 	startUpdating();
@@ -117,7 +136,7 @@ rrd.create(filename, 60, now(), ['DS:loadavg1:GAUGE:120:0:U', 'RRA:LAST:0.5:1:60
 
 # Alpha
 
-This module is in alpha development stage. 
+This module is in early development stage which means the API is not frozen etc...
 At this point not all rrdtool commands are binded. I did the ones that where the most important to me.
 If you really need xport or an other command feel free to contact me (thierry dot passeron at gmail dot com).
 

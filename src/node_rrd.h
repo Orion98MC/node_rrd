@@ -94,9 +94,9 @@ public:
         var rrd = require('rrd');
 
         var now = Math.ceil((new Date).getTime() / 1000);
-        rrd.create('/tmp/test.rrd', 60, now, ["DS:busy:GAUGE:120:0:U", "RRA:LAST:0.5:1:60"], function (status){ 
-            if (status === 0) console.log("Created!");
-            else console.log("Error!");
+        rrd.create('/tmp/test.rrd', 60, now, ["DS:busy:GAUGE:120:0:U", "RRA:LAST:0.5:1:60"], function (error) { 
+            if (error === null) console.log("Created!");
+            else console.log("Error:", error);
         });
 */
 Handle<Value> create(const Arguments &args);
@@ -116,9 +116,9 @@ Handle<Value> create(const Arguments &args);
         var value = 80.0;
         var now = Math.ceil((new Date).getTime() / 1000);
 
-        rrd.update('/tmp/test.rrd', 'busy', [[now, value].join(':')], function (status){ 
-            if (status === 0) console.log("Updated!");
-            else console.log("Error!");
+        rrd.update('/tmp/test.rrd', 'busy', [[now, value].join(':')], function (error) { 
+            if (error === null) console.log("Updated!");
+            else console.log("Error:", error);
         });
 */
 Handle<Value> update(const Arguments &args);

@@ -36,15 +36,15 @@ function createAnRRD(done) {
 		  "DS:x:GAUGE:60:0:U"
 		, "RRA:LAST:0.5:1:60"
 	], function(status) { 
-		assert(status === 0); 
-		done(status === 0 ? undefined : status); 
+		assert(status === null); 
+		done(status === null ? undefined : status); 
 	});
 }
 
 function updateRRDWith(data, done) {
 	rrd_bindings.update(filename, "x", data, function(status) { 
-		assert(status === 0); 
-		done(status === 0 ? undefined : status); 
+		assert(status === null); 
+		done(status === null ? undefined : status); 
 	});
 }
 

@@ -93,7 +93,9 @@ static void async_after(uv_work_t *req) {
 
     Infos * info = static_cast<Infos*>(req->data);
     
-    info->callback->Call(Context::GetCurrent()->Global(), 1, (Handle<Value> []){ Number::New(info->status) });
+    info->callback->Call(Context::GetCurrent()->Global(), 1, (Handle<Value> []){ info->status < 0 ? String::New(rrd_get_error()) : Null() });
+
+    rrd_clear_error();
     
     delete(info);
 }
