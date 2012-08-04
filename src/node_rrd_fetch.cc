@@ -115,6 +115,10 @@ static void async_after(uv_work_t *req) {
             info->callback->Call(Context::GetCurrent()->Global(), 2, argv);
         }
         
+        /* Last callback with (null, null) */
+        Handle<Value> argv[] = { Null(), Null() };
+        info->callback->Call(Context::GetCurrent()->Global(), 2, argv);
+        
     } else {
         info->callback->Call(Context::GetCurrent()->Global(), 1, (Handle<Value> []){ Number::New(info->status) });
     }

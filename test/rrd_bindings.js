@@ -96,10 +96,11 @@ describe('Native bindings', function(){
 
     		 	Comments ?...
     		 */
-    		var already_done = false;
+        // var already_done = false;
     		rrd_bindings.fetch(filename, 'LAST', now()-3600, now(), null, function (time, data) {
-    			assert(typeof data !== 'undefined');
-    			if (!already_done) { already_done = true; done(); }
+          // assert(typeof data !== 'undefined');
+          // if (!already_done) { already_done = true; done(); }
+          if (time === null && data === null) done();
     		})
     	});
     });
