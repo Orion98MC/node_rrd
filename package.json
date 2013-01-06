@@ -1,16 +1,33 @@
-{ "name": "rrd"
-, "version": "1.0.4"
-, "authors": [
-    "Thierry Passeron (thierry.passeron@gmail.com)"
+{ 
+    "name": "rrd"
+  , "version": "0.0.3"
+  , "author": "Thierry Passeron (thierry.passeron@gmail.com)"
+  , "contributors": [
+    
   ]
-, "description": "Node.js native binding for RRDtool"
-, "engines": { "node": ">=0.6.0" }
-, "main": "./lib/rrd"
-, "dependencies": {
-    "bindings": "*"
+  , "description": "Node.js native binding for RRDtool"
+  , "keywords": [
+        "rrd"
+      , "rrdtool"
+      , "round robin database"
+      , "node"
+      , "native"
+  ]
+  , "engines": { "node": ">=0.6.0" }
+  , "main": "./lib/rrd"
+  , "scripts": {
+      "test": "cd test; make"
   }
-, "repository": {
-    "type": "git"
-  , "url": "http://github.com/Orion98MC/node_rrd.git"
+  , "dependencies": {
+      "bindings": "*"
   }
+  , "devDependencies": {
+      "mocha": ">=1.3.0"
+    , "node-gyp": ">=0.6.3" 
+  }
+  , "repository": {
+      "type": "git"
+    , "url": "http://github.com/Orion98MC/node_rrd.git"
+  }
+
 }

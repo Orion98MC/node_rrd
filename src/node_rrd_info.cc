@@ -74,7 +74,8 @@ static void async_after(uv_work_t *req) {
 
     Infos * info = static_cast<Infos*>(req->data);
     
-    info->callback->Call(Context::GetCurrent()->Global(), 1, (Handle<Value> []){ info_data_to_object((rrd_info_t *)info->data) });
+    Handle<Value> res[] = { info_data_to_object((rrd_info_t *)info->data) };
+    info->callback->Call(Context::GetCurrent()->Global(), 1, res);
 
     delete(info);    
 }
