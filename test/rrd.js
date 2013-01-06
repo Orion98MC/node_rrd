@@ -26,7 +26,6 @@
 
 var
 	assert = require('assert')
-,   conform = require('../lib/argue').conform
 ,	rrd = null
 ;
 
