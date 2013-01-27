@@ -58,7 +58,7 @@ describe('Native bindings', function(){
     it('should load rrd_bindings', function () {
     	rrd_bindings = require('bindings')('rrd_bindings');
     	assert(typeof rrd_bindings === 'object');
-    })
+    });
 
     describe('Create', function () {
     	it('should have a create function', function () {
@@ -85,50 +85,41 @@ describe('Native bindings', function(){
 	describe('Fetch', function () {
     	it('should have a fetch function', function () {
     		assert(typeof rrd_bindings.fetch === 'function');
-    	})
+    	});
 
     	it('should fetch', function (done) {
     		
-    		/* 
-    			While doing this test case I thought it could be useful to have a completed callback
-    		 	in the fetch to be able to do things like this. 
-    		 	For now this test case is pretty broken!
-
-    		 	Comments ?...
-    		 */
-        // var already_done = false;
     		rrd_bindings.fetch(filename, 'LAST', now()-3600, now(), null, function (time, data) {
-          // assert(typeof data !== 'undefined');
-          // if (!already_done) { already_done = true; done(); }
           if (time === null && data === null) done();
-    		})
+    		});
+        
     	});
     });
 
 	describe('Last', function () {
     	it('should have a last function', function () {
     		assert(typeof rrd_bindings.last === 'function');
-    	})
+    	});
 
     	it('should get last update time', function (done) {
     		rrd_bindings.last(filename, function (time) {
     			assert(time > 0);
     			done();
-    		})
+    		});
     	});
     });    
 
 	describe('Info', function () {
     	it('should have a info function', function () {
     		assert(typeof rrd_bindings.info === 'function');
-    	})
+    	});
 
     	it('should get RRD info', function (done) {
     		rrd_bindings.info(filename, function (data) {
     			assert(typeof data === 'object');
     			assert(data.filename === filename);
     			done();
-    		})
+    		});
     	});
     });        
     

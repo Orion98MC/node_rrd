@@ -1,3 +1,3 @@
 .PHONY: test
 test:
-	mocha -w -G .
+	mocha -t 10000 -w -G .

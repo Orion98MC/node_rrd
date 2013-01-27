@@ -111,8 +111,9 @@ static void async_after(uv_work_t *req) {
 
         datai = info->data;
         for (ti = info->start + info->step; ti <= info->end; ti += info->step) {
-            Handle<Value> argv[] = { Number::New(ti), current_data_to_object(info->ds_cnt, info->ds_namv, datai++) };
+            Handle<Value> argv[] = { Number::New(ti), current_data_to_object(info->ds_cnt, info->ds_namv, datai) };
             info->callback->Call(Context::GetCurrent()->Global(), 2, argv);
+            datai += info->ds_cnt;
         }
         
         /* Last callback with (null, null) */
@@ -145,7 +146,7 @@ Handle<Object> current_data_to_object(unsigned long ds_cnt, char ** ds_namv, rrd
 
     datai = data;
     for (ii = 0; ii < ds_cnt; ii++) {
-        result->Set(String::New(ds_namv[ii]), Number::New(*(datai++)));
+        result->Set(String::New(ds_namv[ii]), Number::New(datai[ii]));
     }
 
     return scope.Close(result);
