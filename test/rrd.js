@@ -78,8 +78,8 @@ describe('rrd DS', function(){
   it('should output DS spec', function () {	
     
     var ds = new DS({name: "probe", type: "gauge", heartbeat: 60, min: 0, max: "U"});
-    assert(ds.stringify);
-    assert(ds.stringify() === "DS:probe:GAUGE:60:0:U");
+    assert(ds.toString());
+    assert(ds.toString() === "DS:probe:GAUGE:60:0:U");
     
   });  
   
@@ -96,16 +96,16 @@ describe('rrd RRA', function(){
   it('should create a RRA with rrd.RRA', function () {	
   	assert(typeof rrd.RRA === 'function');
     
-    var rra = new RRA({type:"LAST", xff: 0.5, steps: 1, rows: 10});
+    var rra = new RRA({cf:"LAST", xff: 0.5, steps: 1, rows: 10});
     assert(rra);
     
   });
 
   it('should output RRA spec', function () {	
     
-    var rra = new RRA({type:"LAST", xff: 0.5, steps: 1, rows: 10});
-    assert(rra.stringify);
-    assert(rra.stringify() === "RRA:LAST:0.5:1:10");
+    var rra = new RRA({cf:"LAST", xff: 0.5, steps: 1, rows: 10});
+    assert(rra.toString);
+    assert(rra.toString() === "RRA:LAST:0.5:1:10");
     
   });  
   
@@ -127,7 +127,7 @@ describe('rrd create', function() {
       time: rrd.nows(-10),
       
       ds: new DS({name: "dc", type: "gauge", heartbeat: 120, min: 0, max: "U"}),
-      rra: new RRA({type: "last", xff: 0.5, steps: 1, rows: 10})
+      rra: new RRA({cf: "last", xff: 0.5, steps: 1, rows: 10})
       
     }, function (error) { assert(!error); done(); });
     
@@ -140,7 +140,7 @@ describe('rrd create', function() {
       time: rrd.nows(-10),
       
       ds: [new DS({name: "dc", type: "gauge", heartbeat: 120, min: 0, max: "U"}), new DS({name: "dc2", type: "gauge", heartbeat: 120, min: 0, max: "U"})],
-      rra: [new RRA({type: "last", xff: 0.5, steps: 1, rows: 10}), new RRA({type: "average", xff: 0.5, steps: 10, rows: 10})]
+      rra: [new RRA({cf: "last", xff: 0.5, steps: 1, rows: 10}), new RRA({cf: "average", xff: 0.5, steps: 10, rows: 10})]
       
     }, function (error) { assert(!error); done(); });
     
@@ -153,7 +153,7 @@ describe('rrd create', function() {
       time: rrd.nows(-10),
       
       ds: {name: "dc", type: "gauge", heartbeat: 120, min: 0, max: "U"},
-      rra: {type: "last", xff: 0.5, steps: 1, rows: 10}
+      rra: {cf: "last", xff: 0.5, steps: 1, rows: 10}
       
     }, function (error) { assert(!error); done(); });    
     
@@ -166,7 +166,7 @@ describe('rrd create', function() {
       time: rrd.nows(-10),
       
       ds: [{name: "dc", type: "gauge", heartbeat: 120, min: 0, max: "U"}, {name: "dc2", type: "gauge", heartbeat: 120, min: 0, max: "U"}],
-      rra: [{type: "last", xff: 0.5, steps: 1, rows: 10}, {type: "average", xff: 0.5, steps: 10, rows: 10}]
+      rra: [{cf: "last", xff: 0.5, steps: 1, rows: 10}, {cf: "average", xff: 0.5, steps: 10, rows: 10}]
       
     }, function (error) { assert(!error); done(); });
   
@@ -186,7 +186,7 @@ describe('rrd update', function() {
       time: rrd.nows(-1),
       
       ds: [{name: "dc1", type: "gauge", heartbeat: 5, min: 0, max: "U"}, {name: "dc2", type: "gauge", heartbeat: 5, min: 0, max: "U"}],
-      rra: [{type: "last", xff: 0.5, steps: 1, rows: 10}, {type: "average", xff: 0.5, steps: 10, rows: 10}]
+      rra: [{cf: "last", xff: 0.5, steps: 1, rows: 10}, {cf: "average", xff: 0.5, steps: 10, rows: 10}]
       
     }, function (error) { assert(!error); done(); });
   });
