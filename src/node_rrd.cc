@@ -26,6 +26,37 @@
 
 #include "node_rrd.h"
 
+
+#pragma mark tool methods
+
+/* @return
+    {
+        <ds_name1>: <value1>,
+        <ds_name2>: <value2>,
+        ...
+    }
+*/
+Handle<Object> current_data_to_object(unsigned long ds_cnt, char ** ds_namv, rrd_value_t *data) { 
+    HandleScope scope;
+
+    Handle<ObjectTemplate> obj = ObjectTemplate::New();
+    Handle<Object> result = obj->NewInstance();
+
+    unsigned long ii;
+    rrd_value_t *datai;
+
+    datai = data;
+    for (ii = 0; ii < ds_cnt; ii++) {
+        result->Set(String::New(ds_namv[ii]), Number::New(datai[ii]));
+    }
+
+    return scope.Close(result);
+}
+
+#pragma mark -
+
+
+
 extern "C" {
     static void init(Handle<Object> target) {
         HandleScope scope;
@@ -34,6 +65,7 @@ extern "C" {
         NODE_SET_METHOD(target, "fetch", node_rrd::fetch);
         NODE_SET_METHOD(target, "last", node_rrd::last);
         NODE_SET_METHOD(target, "info", node_rrd::info);
+        NODE_SET_METHOD(target, "xport", node_rrd::xport);
     }
 
     NODE_MODULE(rrd_bindings, init)

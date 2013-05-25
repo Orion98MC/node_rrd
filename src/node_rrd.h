@@ -178,6 +178,19 @@ Handle<Value> last(const Arguments &args);
 */
 Handle<Value> info(const Arguments &args); 
 
+
+/*
+  xport
+  Get data with consolidation
+
+  Usage:
+    rrd.xport(rrd_xport_args, Function callback);
+*/
+Handle<Value> xport(const Arguments &args);
+
 }
 
 using namespace node_rrd;
+
+
+Handle<Object> current_data_to_object(unsigned long ds_cnt, char ** ds_namv, rrd_value_t *data);

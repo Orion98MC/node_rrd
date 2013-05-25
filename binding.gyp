@@ -8,6 +8,7 @@
         , "src/node_rrd_fetch.cc"
       	, "src/node_rrd_last.cc"
       	, "src/node_rrd_info.cc"
+        , "src/node_rrd_xport.cc"
       	, "src/node_rrd.cc"
       ],
       'libraries': [ "-lrrd" ]

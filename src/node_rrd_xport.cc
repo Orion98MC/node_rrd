@@ -32,23 +32,27 @@ namespace {
 
 class Infos: public AsyncInfos {
 public:
-    char *cf;
+    int argc;
+    char **argv;
+    
     time_t start;
     time_t end;        /* which time frame do you want ?
                          * will be changed to represent reality */
+    int xsize; 
     unsigned long step;    /* which stepsize do you want? 
                              * will be changed to represent reality */
-    unsigned long ds_cnt;  /* number of data sources in file */
-    char **ds_namv;    /* names of data_sources */
-    rrd_value_t *data; 
+    unsigned long col_cnt; /* number of data columns in the result */
+    char **legend_v;   /* legend entries */
+    rrd_value_t *data; /* two dimensional array containing the data */
 
     ~Infos();
 };
 
 Infos::~Infos() {
-    free(cf);
-    for (unsigned long i = 0; i < ds_cnt; i++) free(ds_namv[i]);
-    free(ds_namv);
+    for (int i = 0; i < argc; i++) free(argv[i]);
+    free(argv);
+    for (unsigned long i = 0; i < col_cnt; i++) free(legend_v[i]);
+    free(legend_v);
     free(data);
 }
 
@@ -57,26 +61,19 @@ Infos::~Infos() {
 static void async_worker(uv_work_t *req);
 static void async_after(uv_work_t *req);
 
-Handle<Value> fetch(const Arguments &args) { // rrd.fetch(String filename, String cf, Number start, Number end, Number step, Function callback);
+Handle<Value> xport(const Arguments &args) { // rrd.xport(Array xport_arguments, Function callback);
     HandleScope scope;
 
-    CHECK_FUN_ARG(5)
+    CHECK_FUN_ARG(1)
 
     // Create baton
     CREATE_ASYNC_BATON(Infos, info)
-
-    // Get filename
-    SET_CHARS_ARG(0, info->filename)
-
-    // Get template string
-    SET_CHARS_ARG(1, info->cf);
-
-    info->start = args[2]->Uint32Value();
-    info->end = args[3]->Uint32Value();
-    info->step = args[4]->Uint32Value();
-
+      
+    // Get xport_arguments
+    SET_ARGC_ARGV_ARG(0, info->argc, info->argv)
+      
     // Get callback
-    SET_PERSFUN_ARG(5, info->callback)
+    SET_PERSFUN_ARG(1, info->callback)
 
     uv_queue_work(uv_default_loop(), &info->request, async_worker, async_after);
 
@@ -85,16 +82,17 @@ Handle<Value> fetch(const Arguments &args) { // rrd.fetch(String filename, Strin
 
 static void async_worker(uv_work_t *req) {
     Infos * info = static_cast<Infos*>(req->data);
-
-    info->status = rrd_fetch_r(
-        (const char *)info->filename,
-        (const char *)info->cf,
-        &info->start,
-        &info->end,
-        &info->step,
-        &info->ds_cnt,
-        &info->ds_namv,
-        &info->data
+    
+    info->status = rrd_xport(
+      info->argc, 
+      info->argv, 
+      &info->xsize, 
+      &info->start, 
+      &info->end, 
+      &info->step, 
+      &info->col_cnt, 
+      &info->legend_v, 
+      &info->data
     );
 }
 
@@ -104,19 +102,20 @@ static void async_after(uv_work_t *req) {
     Infos * info = static_cast<Infos*>(req->data);
     
     if (info->status == 0) {
-        rrd_value_t *datai;
+      rrd_value_t *datai;
         long ti;
 
         datai = info->data;
         for (ti = info->start + info->step; ti <= info->end; ti += info->step) {
-            Handle<Value> argv[] = { Number::New(ti), current_data_to_object(info->ds_cnt, info->ds_namv, datai) };
+            Handle<Value> argv[] = { Number::New(ti), current_data_to_object(info->col_cnt, info->legend_v, datai) };
             info->callback->Call(Context::GetCurrent()->Global(), 2, argv);
-            datai += info->ds_cnt;
+            datai += info->col_cnt;
         }
         
         /* Last callback with (null, null) */
         Handle<Value> argv[] = { Null(), Null() };
         info->callback->Call(Context::GetCurrent()->Global(), 2, argv);
+                
         
     } else {
         Handle<Value> res[] = { Number::New(info->status) };
