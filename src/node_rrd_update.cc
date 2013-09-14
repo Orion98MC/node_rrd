@@ -70,7 +70,7 @@ Handle<Value> update(const Arguments &args) { // rrd.update(String filename, Str
     // Get callback
     SET_PERSFUN_ARG(3, info->callback)
 
-    uv_queue_work(uv_default_loop(), &info->request, async_worker, async_after);
+    uv_queue_work(uv_default_loop(), &info->request, async_worker, (uv_after_work_cb)async_after);
 
     return Undefined();
 }
