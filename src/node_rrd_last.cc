@@ -40,8 +40,8 @@ public:
 static void async_worker(uv_work_t *req);
 static void async_after(uv_work_t *req);
 
-Handle<Value> last(const Arguments &args) { // rrd.last(String filename, Function callback);
-    HandleScope scope;
+NAN_METHOD(last) { // rrd.last(String filename, Function callback);
+    NanScope();
 
     CHECK_FUN_ARG(1)
 
@@ -56,7 +56,7 @@ Handle<Value> last(const Arguments &args) { // rrd.last(String filename, Functio
 
     uv_queue_work(uv_default_loop(), &info->request, async_worker, (uv_after_work_cb)async_after);
 
-    return Undefined();
+    NanReturnUndefined();
 }
 
 static void async_worker(uv_work_t *req) {
@@ -66,12 +66,12 @@ static void async_worker(uv_work_t *req) {
 }
 
 static void async_after(uv_work_t *req) {
-    HandleScope scope;
+    NanScope();
 
     Infos * info = static_cast<Infos*>(req->data);
     
-    Handle<Value> res[] = { Number::New(info->last) };
-    info->callback->Call(Context::GetCurrent()->Global(), 1, res);
+    Handle<Value> res[] = { NanNew<Number>(info->last) };
+    info->callback->Call(1, res);
     
     delete(info);
 }

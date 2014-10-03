@@ -36,6 +36,8 @@
 #   include <iostream> 
 #endif
 
+#include <nan.h>
+
 using namespace v8;
 using namespace node;
 
@@ -51,9 +53,9 @@ public:
     int status;
     
     /* Used by the uv after_work callback */
-    Persistent<Function> callback;
+    NanCallback *callback;
 
-    ~AsyncInfos() { callback.Dispose(); free(filename); }
+    ~AsyncInfos() { delete callback; free(filename); }
 };
 
 /* Some useful macros to extract arguments */
@@ -72,16 +74,14 @@ public:
 
 #define CHECK_FUN_ARG(I)                                                \
   if (args.Length() <= (I) || !args[I]->IsFunction())                   \
-    return v8::ThrowException(v8::Exception::TypeError(                 \
-                  String::New("Argument " #I " must be a function")));  
+    return NanThrowTypeError("Argument " #I " must be a function");
 
 #define SET_PERSFUN_ARG(I, VAR)                                         \
-  VAR = Persistent<Function>::New(Local<Function>::Cast(args[I]));
+  VAR = new NanCallback(Local<Function>::Cast(args[I]));
 
 #define CREATE_ASYNC_BATON(K, VAR)                                      \
   K *VAR = new K();                                                     \
   VAR->request.data = VAR;
-
 
 /*
     create
@@ -99,7 +99,7 @@ public:
             else console.log("Error:", error);
         });
 */
-Handle<Value> create(const Arguments &args);
+NAN_METHOD(create);
 
 
 
@@ -121,7 +121,7 @@ Handle<Value> create(const Arguments &args);
             else console.log("Error:", error);
         });
 */
-Handle<Value> update(const Arguments &args);
+NAN_METHOD(update);
 
 
 
@@ -140,7 +140,7 @@ Handle<Value> update(const Arguments &args);
             console.log(time, data);
         });
 */
-Handle<Value> fetch(const Arguments &args);
+NAN_METHOD(fetch);
 
 
 
@@ -158,7 +158,7 @@ Handle<Value> fetch(const Arguments &args);
             console.log('Last updated on', new Date(time * 1000));
         });
 */
-Handle<Value> last(const Arguments &args);
+NAN_METHOD(last);
 
 
 
@@ -176,7 +176,7 @@ Handle<Value> last(const Arguments &args);
             console.log(info);
         });
 */
-Handle<Value> info(const Arguments &args); 
+NAN_METHOD(info);
 
 }
 
