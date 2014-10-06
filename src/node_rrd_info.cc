@@ -34,7 +34,7 @@ class Infos: public AsyncInfos {
 public:
     rrd_info_t *data;
 
-    ~Infos() { free(data); }
+    ~Infos() { rrd_info_free(data); }
 };
 
 }
