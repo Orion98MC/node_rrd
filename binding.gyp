@@ -10,6 +10,7 @@
       	, "src/node_rrd_info.cc"
       	, "src/node_rrd.cc"
       ],
+      'include_dirs' : [ "<!(node -e \"require('nan')\")" ],
       'libraries': [ "-lrrd" ]
     }
   ]

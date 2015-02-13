@@ -57,8 +57,8 @@ Infos::~Infos() {
 static void async_worker(uv_work_t *req);
 static void async_after(uv_work_t *req);
 
-Handle<Value> fetch(const Arguments &args) { // rrd.fetch(String filename, String cf, Number start, Number end, Number step, Function callback);
-    HandleScope scope;
+NAN_METHOD(fetch) { // rrd.fetch(String filename, String cf, Number start, Number end, Number step, Function callback);
+    NanScope();
 
     CHECK_FUN_ARG(5)
 
@@ -80,7 +80,7 @@ Handle<Value> fetch(const Arguments &args) { // rrd.fetch(String filename, Strin
 
     uv_queue_work(uv_default_loop(), &info->request, async_worker, (uv_after_work_cb)async_after);
 
-    return Undefined();
+    NanReturnUndefined();
 }
 
 static void async_worker(uv_work_t *req) {
@@ -101,7 +101,7 @@ static void async_worker(uv_work_t *req) {
 Handle<Object> current_data_to_object(unsigned long ds_cnt, char ** ds_namv, rrd_value_t *data);
 
 static void async_after(uv_work_t *req) {
-    HandleScope scope;
+    NanScope();
 
     Infos * info = static_cast<Infos*>(req->data);
     
@@ -111,18 +111,18 @@ static void async_after(uv_work_t *req) {
 
         datai = info->data;
         for (ti = info->start + info->step; ti <= info->end; ti += info->step) {
-            Handle<Value> argv[] = { Number::New(ti), current_data_to_object(info->ds_cnt, info->ds_namv, datai) };
-            info->callback->Call(Context::GetCurrent()->Global(), 2, argv);
+            Handle<Value> argv[] = { NanNew<Number>(ti), current_data_to_object(info->ds_cnt, info->ds_namv, datai) };
+            info->callback->Call(2, argv);
             datai += info->ds_cnt;
         }
         
         /* Last callback with (null, null) */
-        Handle<Value> argv[] = { Null(), Null() };
-        info->callback->Call(Context::GetCurrent()->Global(), 2, argv);
+        Handle<Value> argv[] = { NanNull(), NanNull() };
+        info->callback->Call(2, argv);
         
     } else {
-        Handle<Value> res[] = { Number::New(info->status) };
-        info->callback->Call(Context::GetCurrent()->Global(), 1, res);
+        Handle<Value> res[] = { NanNew<Number>(info->status) };
+        info->callback->Call(1, res);
     }
 
     delete(info);
@@ -136,7 +136,7 @@ static void async_after(uv_work_t *req) {
     }
 */
 Handle<Object> current_data_to_object(unsigned long ds_cnt, char ** ds_namv, rrd_value_t *data) { 
-    HandleScope scope;
+    NanEscapableScope();
 
     Handle<ObjectTemplate> obj = ObjectTemplate::New();
     Handle<Object> result = obj->NewInstance();
@@ -146,10 +146,10 @@ Handle<Object> current_data_to_object(unsigned long ds_cnt, char ** ds_namv, rrd
 
     datai = data;
     for (ii = 0; ii < ds_cnt; ii++) {
-        result->Set(String::New(ds_namv[ii]), Number::New(datai[ii]));
+        result->Set(NanNew<String>(ds_namv[ii]), NanNew<Number>(datai[ii]));
     }
 
-    return scope.Close(result);
+    return NanEscapeScope(result);
 }
 
 }

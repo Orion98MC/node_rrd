@@ -28,7 +28,7 @@
 
 extern "C" {
     static void init(Handle<Object> target) {
-        HandleScope scope;
+        NanScope();
         NODE_SET_METHOD(target, "create", node_rrd::create);
         NODE_SET_METHOD(target, "update", node_rrd::update);
         NODE_SET_METHOD(target, "fetch", node_rrd::fetch);

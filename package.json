@@ -21,6 +21,7 @@
   , "dependencies": {
       "bindings": "*"
     , "arguee": ">=0.0.2" 
+    , "nan": "*"
   }
   , "devDependencies": {
       "mocha": ">=1.3.0"

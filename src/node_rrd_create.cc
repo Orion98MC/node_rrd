@@ -50,8 +50,8 @@ Infos::~Infos() {
 static void async_worker(uv_work_t *req);
 static void async_after(uv_work_t *req);
 
-Handle<Value> create(const Arguments &args) { /* rrd.create(String filename, Number step, Number start, Array spec, Function callback); */
-    HandleScope scope;
+NAN_METHOD(create) { /* rrd.create(String filename, Number step, Number start, Array spec, Function callback); */
+    NanScope();
 
     CHECK_FUN_ARG(4)
 
@@ -75,7 +75,7 @@ Handle<Value> create(const Arguments &args) { /* rrd.create(String filename, Num
 
     uv_queue_work(uv_default_loop(), &info->request, async_worker, (uv_after_work_cb)async_after);
 
-    return Undefined();
+    NanReturnUndefined();
 }
 
 static void async_worker(uv_work_t *req) {
@@ -91,12 +91,13 @@ static void async_worker(uv_work_t *req) {
 }
 
 static void async_after(uv_work_t *req) {
-    HandleScope scope;
+    NanScope();
 
     Infos * info = static_cast<Infos*>(req->data);
     
-    Handle<Value> res[] = { info->status < 0 ? String::New(rrd_get_error()) : Null() };
-    info->callback->Call(Context::GetCurrent()->Global(), 1, res);
+    Handle<Value> res[] = { NanNull() };
+    if (info->status < 0) res[0] = NanNew<String>(rrd_get_error());
+    info->callback->Call(1, res);
 
     rrd_clear_error();
     
