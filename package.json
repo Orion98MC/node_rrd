@@ -13,7 +13,7 @@
       , "node"
       , "native"
   ]
-  , "engines": { "node": ">=0.6.0" }
+  , "engines": { "node": ">=0.6.0 <0.13" }
   , "main": "./lib/rrd"
   , "scripts": {
       "test": "cd test; make"
@@ -21,7 +21,7 @@
   , "dependencies": {
       "bindings": "*"
     , "arguee": ">=0.0.2" 
-    , "nan": "*"
+    , "nan": "1.8.x"
   }
   , "devDependencies": {
       "mocha": ">=1.3.0"
