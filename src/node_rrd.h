@@ -53,18 +53,18 @@ public:
     int status;
     
     /* Used by the uv after_work callback */
-    NanCallback *callback;
+    Nan::Callback *callback;
 
     ~AsyncInfos() { delete callback; free(filename); }
 };
 
 /* Some useful macros to extract arguments */
 #define SET_CHARS_ARG(I, VAR)                                           \
-    String::Utf8Value _chars ## I(args[I]->ToString());                 \
+    String::Utf8Value _chars ## I(info[I]->ToString());                 \
     VAR = strndup(*_chars ## I, _chars ## I.length());
 
 #define SET_ARGC_ARGV_ARG(I, VAR_ARGC, VAR_ARGV)                        \
-    Local<Array> argv ## I = Local<Array>::Cast(args[I]);               \
+    Local<Array> argv ## I = Local<Array>::Cast(info[I]);               \
     VAR_ARGC = argv ## I->Length();                                     \
     VAR_ARGV = (char**)malloc(sizeof(char*) * VAR_ARGC);                \
     for (int i = 0; i < VAR_ARGC; i++) {                                \
@@ -73,11 +73,11 @@ public:
     }
 
 #define CHECK_FUN_ARG(I)                                                \
-  if (args.Length() <= (I) || !args[I]->IsFunction())                   \
-    return NanThrowTypeError("Argument " #I " must be a function");
+  if (info.Length() <= (I) || !info[I]->IsFunction())                   \
+    return Nan::ThrowTypeError("Argument " #I " must be a function");
 
 #define SET_PERSFUN_ARG(I, VAR)                                         \
-  VAR = new NanCallback(Local<Function>::Cast(args[I]));
+  VAR = new Nan::Callback(Local<Function>::Cast(info[I]));
 
 #define CREATE_ASYNC_BATON(K, VAR)                                      \
   K *VAR = new K();                                                     \

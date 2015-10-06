@@ -1,6 +1,6 @@
 /*
     RRDtool (http://oss.oetiker.ch/rrdtool/) bindings module for node (http://nodejs.org)
-    
+
     Copyright (c), 2012 Thierry Passeron
 
     The MIT License
@@ -51,36 +51,36 @@ static void async_worker(uv_work_t *req);
 static void async_after(uv_work_t *req);
 
 NAN_METHOD(create) { /* rrd.create(String filename, Number step, Number start, Array spec, Function callback); */
-    NanScope();
+    Nan::HandleScope scope;
 
     CHECK_FUN_ARG(4)
 
     // Create info baton
-    CREATE_ASYNC_BATON(Infos, info)
+    CREATE_ASYNC_BATON(Infos, _info)
 
     // Get filename
-    SET_CHARS_ARG(0, info->filename)
+    SET_CHARS_ARG(0, _info->filename)
 
     // Get step
-    info->step = args[1]->Uint32Value();
+    _info->step = Nan::To<uint32_t>(info[1]).FromJust();
 
     // Get start time
-    info->time = args[2]->Uint32Value();
+    _info->time = Nan::To<uint32_t>(info[2]).FromJust();
 
     // Get spec array
-    SET_ARGC_ARGV_ARG(3, info->argc, info->argv)
+    SET_ARGC_ARGV_ARG(3, _info->argc, _info->argv)
 
     // Get callback
-    SET_PERSFUN_ARG(4, info->callback)
+    SET_PERSFUN_ARG(4, _info->callback)
 
-    uv_queue_work(uv_default_loop(), &info->request, async_worker, (uv_after_work_cb)async_after);
+    uv_queue_work(uv_default_loop(), &_info->request, async_worker, (uv_after_work_cb)async_after);
 
-    NanReturnUndefined();
+    return;
 }
 
 static void async_worker(uv_work_t *req) {
-    Infos * info = static_cast<Infos*>(req->data);
-    
+    auto info = static_cast<Infos*>(req->data);
+
     info->status = rrd_create_r(
         (const char*)info->filename,
         info->step,
@@ -91,16 +91,16 @@ static void async_worker(uv_work_t *req) {
 }
 
 static void async_after(uv_work_t *req) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Infos * info = static_cast<Infos*>(req->data);
-    
-    Handle<Value> res[] = { NanNull() };
-    if (info->status < 0) res[0] = NanNew<String>(rrd_get_error());
+    auto info = static_cast<Infos*>(req->data);
+
+    Local<Value> res[] = { Nan::Null() };
+    if (info->status < 0) res[0] = Nan::New<String>(rrd_get_error()).ToLocalChecked();
     info->callback->Call(1, res);
 
     rrd_clear_error();
-    
+
     delete(info);
 }
 
