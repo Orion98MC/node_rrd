@@ -1,6 +1,6 @@
 /*
     RRDtool (http://oss.oetiker.ch/rrdtool/) bindings module for node (http://nodejs.org)
-    
+
     Copyright (c), 2012 Thierry Passeron
 
     The MIT License
@@ -27,13 +27,13 @@
 #include "node_rrd.h"
 
 extern "C" {
-    static void init(Handle<Object> target) {
-        NanScope();
-        NODE_SET_METHOD(target, "create", node_rrd::create);
-        NODE_SET_METHOD(target, "update", node_rrd::update);
-        NODE_SET_METHOD(target, "fetch", node_rrd::fetch);
-        NODE_SET_METHOD(target, "last", node_rrd::last);
-        NODE_SET_METHOD(target, "info", node_rrd::info);
+    static void init(Local<Object> target) {
+        Nan::HandleScope scope;
+        Nan::SetMethod(target, "create", node_rrd::create);
+        Nan::SetMethod(target, "update", node_rrd::update);
+        Nan::SetMethod(target, "fetch", node_rrd::fetch);
+        Nan::SetMethod(target, "last", node_rrd::last);
+        Nan::SetMethod(target, "info", node_rrd::info);
     }
 
     NODE_MODULE(rrd_bindings, init)

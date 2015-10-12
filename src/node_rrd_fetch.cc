@@ -1,6 +1,6 @@
 /*
     RRDtool (http://oss.oetiker.ch/rrdtool/) bindings module for node (http://nodejs.org)
-    
+
     Copyright (c), 2012 Thierry Passeron
 
     The MIT License
@@ -36,11 +36,11 @@ public:
     time_t start;
     time_t end;        /* which time frame do you want ?
                          * will be changed to represent reality */
-    unsigned long step;    /* which stepsize do you want? 
+    unsigned long step;    /* which stepsize do you want?
                              * will be changed to represent reality */
     unsigned long ds_cnt;  /* number of data sources in file */
     char **ds_namv;    /* names of data_sources */
-    rrd_value_t *data; 
+    rrd_value_t *data;
 
     ~Infos();
 };
@@ -58,33 +58,33 @@ static void async_worker(uv_work_t *req);
 static void async_after(uv_work_t *req);
 
 NAN_METHOD(fetch) { // rrd.fetch(String filename, String cf, Number start, Number end, Number step, Function callback);
-    NanScope();
+    Nan::HandleScope scope;
 
     CHECK_FUN_ARG(5)
 
     // Create baton
-    CREATE_ASYNC_BATON(Infos, info)
+    CREATE_ASYNC_BATON(Infos, _info)
 
     // Get filename
-    SET_CHARS_ARG(0, info->filename)
+    SET_CHARS_ARG(0, _info->filename)
 
     // Get template string
-    SET_CHARS_ARG(1, info->cf);
+    SET_CHARS_ARG(1, _info->cf);
 
-    info->start = args[2]->Uint32Value();
-    info->end = args[3]->Uint32Value();
-    info->step = args[4]->Uint32Value();
+    _info->start = Nan::To<uint32_t>(info[2]).FromJust();
+    _info->end = Nan::To<uint32_t>(info[3]).FromJust();
+    _info->step = Nan::To<uint32_t>(info[4]).FromJust();
 
     // Get callback
-    SET_PERSFUN_ARG(5, info->callback)
+    SET_PERSFUN_ARG(5, _info->callback)
 
-    uv_queue_work(uv_default_loop(), &info->request, async_worker, (uv_after_work_cb)async_after);
+    uv_queue_work(uv_default_loop(), &_info->request, async_worker, (uv_after_work_cb)async_after);
 
-    NanReturnUndefined();
+    return;
 }
 
 static void async_worker(uv_work_t *req) {
-    Infos * info = static_cast<Infos*>(req->data);
+    auto info = static_cast<Infos*>(req->data);
 
     info->status = rrd_fetch_r(
         (const char *)info->filename,
@@ -98,30 +98,30 @@ static void async_worker(uv_work_t *req) {
     );
 }
 
-Handle<Object> current_data_to_object(unsigned long ds_cnt, char ** ds_namv, rrd_value_t *data);
+Local<Object> current_data_to_object(unsigned long ds_cnt, char ** ds_namv, rrd_value_t *data);
 
 static void async_after(uv_work_t *req) {
-    NanScope();
+    Nan::HandleScope scope;
 
-    Infos * info = static_cast<Infos*>(req->data);
-    
+    auto info = static_cast<Infos*>(req->data);
+
     if (info->status == 0) {
         rrd_value_t *datai;
         long ti;
 
         datai = info->data;
         for (ti = info->start + info->step; ti <= info->end; ti += info->step) {
-            Handle<Value> argv[] = { NanNew<Number>(ti), current_data_to_object(info->ds_cnt, info->ds_namv, datai) };
+            Local<Value> argv[] = { Nan::New<Number>(ti), current_data_to_object(info->ds_cnt, info->ds_namv, datai) };
             info->callback->Call(2, argv);
             datai += info->ds_cnt;
         }
-        
+
         /* Last callback with (null, null) */
-        Handle<Value> argv[] = { NanNull(), NanNull() };
+        Local<Value> argv[] = { Nan::Null(), Nan::Null() };
         info->callback->Call(2, argv);
-        
+
     } else {
-        Handle<Value> res[] = { NanNew<Number>(info->status) };
+        Local<Value> res[] = { Nan::New<Number>(info->status) };
         info->callback->Call(1, res);
     }
 
@@ -135,21 +135,21 @@ static void async_after(uv_work_t *req) {
         ...
     }
 */
-Handle<Object> current_data_to_object(unsigned long ds_cnt, char ** ds_namv, rrd_value_t *data) { 
-    NanEscapableScope();
+Local<Object> current_data_to_object(unsigned long ds_cnt, char ** ds_namv, rrd_value_t *data) {
+    Nan::EscapableHandleScope scope;
 
-    Handle<ObjectTemplate> obj = ObjectTemplate::New();
-    Handle<Object> result = obj->NewInstance();
+    auto obj = ObjectTemplate::New();
+    auto result = obj->NewInstance();
 
     unsigned long ii;
     rrd_value_t *datai;
 
     datai = data;
     for (ii = 0; ii < ds_cnt; ii++) {
-        result->Set(NanNew<String>(ds_namv[ii]), NanNew<Number>(datai[ii]));
+        result->Set(Nan::New<String>(ds_namv[ii]).ToLocalChecked(), Nan::New<Number>(datai[ii]));
     }
 
-    return NanEscapeScope(result);
+    return scope.Escape(result);
 }
 
 }

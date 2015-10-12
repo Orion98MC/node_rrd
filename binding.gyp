@@ -2,7 +2,7 @@
   "targets": [
     {
       "target_name": "rrd_bindings",
-      "sources": [ 
+      "sources": [
           "src/node_rrd_create.cc"
         , "src/node_rrd_update.cc"
         , "src/node_rrd_fetch.cc"
@@ -11,7 +11,8 @@
       	, "src/node_rrd.cc"
       ],
       'include_dirs' : [ "<!(node -e \"require('nan')\")" ],
-      'libraries': [ "-lrrd" ]
+      'libraries': [ "-lrrd" ],
+      'cflags_cc': [ "-std=c++11" ]
     }
   ]
 }
