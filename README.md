@@ -89,15 +89,20 @@ rrd.update(filename, 'busy', [[now, value].join(':')], function (error) {
 
 ## fetch
 ```js
-rrd.fetch(String filename, String cf, Integer start, Integer end, Integer steps, Function callback(Integer time, Object data)) 
+rrd.fetch(String filename, { "cf": String cf, "start": Integer start, "end": Integer end, "resolution": Integer steps }, Function callback(Integer time, Object data)) 
 ```
 
 Example:
 ```js
 var filename = '/tmp/test.rrd';
 var now = Math.ceil((new Date).getTime() / 1000);
-
-rrd.fetch(filename, "LAST", now - 1000, now, null, function (time, data) { 
+var options = {
+	cf: "LAST",           
+	start: now - 1000,
+	end: now,
+	resolution: null
+};
+rrd.fetch(filename, options, function (time, data) { 
 	console.log(time, data); 
 });
 ```
