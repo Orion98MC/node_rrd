@@ -10,7 +10,7 @@ In order to compile the c++ sources, you need to have:
   * the RRDtool library (http://oss.oetiker.ch/rrdtool/).
 
 For tests:
-  * mocha (http://visionmedia.github.com/mocha/).
+  * mocha (http://mochajs.org/).
 
 # Install
 
@@ -147,7 +147,7 @@ If you really need xport or an other command feel free to contact me (thierry do
 
 # Tests
 
-There are some (few) tests in /test done with mocha (http://visionmedia.github.com/mocha/).
+There are some (few) tests in /test done with mocha (http://mochajs.org/).
 I plan to include more tests in the future.
 
 # License terms
