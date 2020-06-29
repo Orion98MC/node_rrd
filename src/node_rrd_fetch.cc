@@ -138,8 +138,8 @@ static void async_after(uv_work_t *req) {
 Local<Object> current_data_to_object(unsigned long ds_cnt, char ** ds_namv, rrd_value_t *data) {
     Nan::EscapableHandleScope scope;
 
-    auto obj = ObjectTemplate::New();
-    auto result = obj->NewInstance();
+    auto obj = ObjectTemplate::New(v8::Isolate::GetCurrent());
+    auto result = obj->NewInstance(Nan::GetCurrentContext()).ToLocalChecked();
 
     unsigned long ii;
     rrd_value_t *datai;

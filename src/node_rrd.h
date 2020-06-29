@@ -60,7 +60,7 @@ public:
 
 /* Some useful macros to extract arguments */
 #define SET_CHARS_ARG(I, VAR)                                           \
-    String::Utf8Value _chars ## I(info[I]->ToString());                 \
+    Nan::Utf8String _chars ## I (info[I]);                              \
     VAR = strndup(*_chars ## I, _chars ## I.length());
 
 #define SET_ARGC_ARGV_ARG(I, VAR_ARGC, VAR_ARGV)                        \
@@ -68,7 +68,7 @@ public:
     VAR_ARGC = argv ## I->Length();                                     \
     VAR_ARGV = (char**)malloc(sizeof(char*) * VAR_ARGC);                \
     for (int i = 0; i < VAR_ARGC; i++) {                                \
-        String::Utf8Value arg(argv ## I->Get(i));                       \
+        Nan::Utf8String arg(argv ## I->Get(i));                       \
         VAR_ARGV[i] = strndup(*arg, arg.length());                      \
     }
 

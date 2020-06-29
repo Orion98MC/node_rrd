@@ -83,8 +83,8 @@ static void async_after(uv_work_t *req) {
 static Local<Object>info_data_to_object(rrd_info_t *data) {
     Nan::EscapableHandleScope scope;
 
-    auto info = ObjectTemplate::New();
-    auto instance = info->NewInstance();
+    auto info = ObjectTemplate::New(v8::Isolate::GetCurrent());
+    auto instance = info->NewInstance(Nan::GetCurrentContext()).ToLocalChecked();
 
     while (data) {
          v8::Local<v8::String> key = Nan::New<String>(data->key).ToLocalChecked();
